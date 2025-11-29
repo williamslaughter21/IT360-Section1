@@ -12,7 +12,7 @@ Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP
 2) Convert timestamp → epoch for correlation
 
   #TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
-  #YEAR=$(date +%Y)  # Assumes event happened this year
+    #YEAR=$(date +%Y)  # Assumes event happened this year
   #EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
 
   #echo "Converted to epoch: $EPOCH"
