@@ -27,6 +27,7 @@ Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP
     -F) } 
     -G) END {print "Closest Frame:", frame, "  Timestamp:", time}
     -H) ' ~/evidence/ssh_frames_epoch.txt
+
 #Output should be the closest frame to the intrusion event
 
 # Written Report(will be in the appropriate file as well)
