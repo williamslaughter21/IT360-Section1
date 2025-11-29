@@ -1,26 +1,101 @@
-# SSH Timestamp to Packet Correlation Tool
-# Maps successful SSH login timestamp to PCAP frame number
+# correlate.sh - SSH Forensic Correlation Tool
 
-grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
+# Goal:
+   -Take a successful SSH login from auth.log and find the closest SSH packet in a PCAP capture.
 
-TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
+# Usage:
+#   sudo bash correlate.sh /var/log/auth.log ~/evidence/bruteforce_victim.pcap
 
-YEAR=$(date +%Y)
+# Output:
+   - Prints the "Accepted password" line
+   - Shows the epoch time used for correlation
+   - Prints closest frame number + timestamp
+   - Saves result in ~/evidence/closest_frame.txt
 
+set -e  # exit on error
+
+AUTHLOG="$1"
+PCAP="$2"
+EVIDENCE_DIR="$HOME/evidence"
+
+# ---------- 0. Basic checks ----------
+if [ -z "$AUTHLOG" ] || [ -z "$PCAP" ]; then
+    echo "Usage: sudo bash correlate.sh /path/to/auth.log /path/to/capture.pcap"
+    exit 1
+fi
+
+if [ ! -f "$AUTHLOG" ]; then
+    echo "[!] Auth log not found: $AUTHLOG"
+    exit 1
+fi
+
+if [ ! -f "$PCAP" ]; then
+    echo "[!] PCAP file not found: $PCAP"
+    exit 1
+fi
+
+mkdir -p "$EVIDENCE_DIR"
+
+# Get last successful SSH login 
+echo "[*] Extracting last 'Accepted password' line from $AUTHLOG ..."
+grep "Accepted password" "$AUTHLOG" | tail -n 1 | tee "$EVIDENCE_DIR/accepted.txt"
+
+if [ ! -s "$EVIDENCE_DIR/accepted.txt" ]; then
+    echo "[!] No 'Accepted password' entries found in auth.log; nothing to correlate."
+    exit 1
+fi
+
+# Example line (for reference in comments):
+# Nov 18 11:57:30 hostname sshd[12345]: Accepted password for labuser from 10.0.0.11 port 54321 ssh2
+
+# Convert that timestamp → epoch 
+echo
+echo "[*] Converting timestamp to epoch ..."
+
+# Take the first 3 fields: 'Nov 18 11:57:30'
+TIMESTR=$(awk '{print $1" "$2" "$3}' "$EVIDENCE_DIR/accepted.txt")
+YEAR=$(date +%Y)                          # assumes same year
 EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
 
-tshark -r ~/evidence/bruteforce_victim.pcap -T fields -e frame.number -e frame.time_epoch > ~/evidence/ssh_frames_epoch.txt
+echo "    Accepted timestamp : $TIMESTR $YEAR"
+echo "    Epoch time (login) : $EPOCH"
 
-awk -v e=$EPOCH '
+# 3. Build (frame_number, epoch_time) list from PCAP
+echo
+echo "[*] Building frame -> epoch list from PCAP (SSH packets only) ..."
 
-BEGIN {min=1e12; frame=0;} 
+tshark -r "$PCAP" -Y "tcp.port==22" \
+  -T fields -e frame.number -e frame.time_epoch \
+  | awk '{printf "%d %.6f\n",$1,$2}' > "$EVIDENCE_DIR/ssh_frames_epoch.txt"
 
-{ diff = ($2 > e) ? ($2 - e) : (e - $2) }
+if [ ! -s "$EVIDENCE_DIR/ssh_frames_epoch.txt" ]; then
+    echo "[!] No SSH (tcp.port==22) packets found in $PCAP."
+    exit 1
+fi
 
-{ if (diff < min) {min=diff; frame=$1} }
+echo "    Saved to $EVIDENCE_DIR/ssh_frames_epoch.txt"
 
-END {print "Closest Frame:", frame}
+# 4. Find frame whose time is closest to login epoch
+echo
+echo "[*] Finding frame closest to login time ..."
 
-' ~/evidence/ssh_frames_epoch.txt > ~/evidence/correlated_output.txt
+awk -v e="$EPOCH" '
+BEGIN {min = 1e12; bestFrame = 0; bestTime = 0}
+{
+    diff = $2 - e
+    if (diff < 0) diff = -diff
+    if (diff < min) {min = diff; bestFrame = $1; bestTime = $2}
+}
+END {printf "%d %.6f\n", bestFrame, bestTime}
+' "$EVIDENCE_DIR/ssh_frames_epoch.txt" | tee "$EVIDENCE_DIR/closest_frame.txt"
 
-#Our official tool!
+FRAME_NUM=$(cut -d' ' -f1 "$EVIDENCE_DIR/closest_frame.txt")
+FRAME_TIME=$(cut -d' ' -f2 "$EVIDENCE_DIR/closest_frame.txt")
+
+echo
+echo "[*] Correlation result:"
+echo "    Closest frame number : $FRAME_NUM"
+echo "    Frame epoch time     : $FRAME_TIME"
+echo
+echo "[*] Full result saved in: $EVIDENCE_DIR/closest_frame.txt"
+echo "    (Open this frame in Wireshark using 'Go → Go to packet...')"
