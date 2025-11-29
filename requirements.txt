@@ -1,1 +1,20 @@
-#List of Python packages or other dependencies 
+# List of Python packages or other dependencies 
+
+No external Python packages were used in this project. Our forensic tool was implemented using native Linux utilities and requires no additional pip-installable libraries.
+
+# Tools/Package used(along with its purpose)
+    1) tcpdump - Captured network packets during brute-force attack
+
+    2) tshark (Wireshark CLI) - Extracted frame timestamps + built epoch map
+
+    3) awk - Compared timestamps to find closest matching packet frame
+
+    4) editcap - Sliced PCAP window to isolate the intrusion moment
+
+    5) OpenSSH - Provided SSH service for brute force exploitation
+
+    6) Hydra - Performed brute-force attack from Kali
+
+    7) sha256sum - Generated chain-of-custody integrity hashes
+
+    8) scp/base64 (optional) - Evidence transfer from VM to host machine
