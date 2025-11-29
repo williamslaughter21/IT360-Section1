@@ -3,8 +3,18 @@
 
 # Key points of the report(I would've put screenshots but we were having troubling implementing them.
 
+  # Attack Execution Evidence
   1) Screenshot of Hydra output - Shows brute-force success (attacker POV)
 
   2) Screenshot of /var/log/auth.log - Confirms login acceptance (victim POV)
 
   3) Screenshot of Failed to Accepted pattern - Proves the intrusion timeline
+
+  # Packet Capture & PCAP Handling
+  1) bruteforce_victim.pcap hash screenshot -Integrity protection for legal admissibility
+
+  2) Wireshark screenshot of slice - Shows SSH traffic packets around intrusion
+
+  3) Screenshot of ssh_frames_epoch.txt -Evidence of timestamp to frame mapping
+
+  4) Screenshot of closest_frame.txt output - Shows correlation result
