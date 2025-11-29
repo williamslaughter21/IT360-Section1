@@ -1,3 +1,2 @@
-auth.log = Log file with brute-force attempts
 success_slice_338_438.pcap = Evidence captured
-slice.b64.txt = Base64 transfer version of PCAP
+[
