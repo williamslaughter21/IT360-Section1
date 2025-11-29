@@ -2,6 +2,16 @@
 # GitHub Repository & Programming Project 
 Functionality: This project aims to create a networking tool to solve a forensic science problem. Our tool is a custom “Brute-Force Forensic Evidence Capture & Correlation Tool” which correlates hosts logs to their exact packets, which correlates to moments of compromise!
 
+# Project Goals
+1) Detect brute-force login attempts from auth.log
+   
+2) Slice PCAP to relevant time window  
+
+3) Map timestamps → Wireshark frame number  
+
+4) Provide forensic evidence of SSH compromise
+
+
 # Code Quality
 SSH-Forensic Correlation Tool
 Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP capture.
