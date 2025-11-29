@@ -1,13 +1,10 @@
 # Final Report
 (https://github.com/user-attachments/files/23832079/Forensic.Project.4.pdf)
 
-# Attack Execution Evidence
-Screenshot of Hydra output - Shows brute-force success (attacker POV)
+# Key points of the report(I would've put screenshots but we were having troubling implementing them.
 
+  1) Screenshot of Hydra output - Shows brute-force success (attacker POV)
 
+  2) Screenshot of /var/log/auth.log - Confirms login acceptance (victim POV)
 
-
-
-# Packet Capture & PCAP Handling
-
-# Tool / Script Artifacts
+  3) Screenshot of Failed to Accepted pattern - Proves the intrusion timeline
