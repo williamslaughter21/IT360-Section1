@@ -7,26 +7,26 @@ SSH-Forensic Correlation Tool
 Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP capture.
 1) Extract accepted login timestamp from auth.log
 
-    A)grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
+    -A)grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
 
 2) Convert timestamp → epoch for correlation
 
-    A)TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
-    B)YEAR=$(date +%Y)  # Assumes event happened this year
-    C)EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
+    -A)TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
+    -B)YEAR=$(date +%Y)  # Assumes event happened this year
+    -C)EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
 
-    D)echo "Converted to epoch: $EPOCH"
+    -D)echo "Converted to epoch: $EPOCH"
 
 3) Compare against packet timestamps extracted earlier using tshark
 
-    A)awk -v e=$EPOCH '
-    B)BEGIN {min=1e12; frame=0; time=0} 
-    C){
-    D)diff = ($2 > e) ? ($2 - e) : (e - $2)
-    E)if (diff < min) {min=diff; frame=$1; time=$2}
-    F)} 
-    G)END {print "Closest Frame:", frame, "  Timestamp:", time}
-    H)#' ~/evidence/ssh_frames_epoch.txt
+    -A)awk -v e=$EPOCH '
+    -B)BEGIN {min=1e12; frame=0; time=0} 
+    -C){
+    -D)diff = ($2 > e) ? ($2 - e) : (e - $2)
+    -E)if (diff < min) {min=diff; frame=$1; time=$2}
+    -F)} 
+    -G)END {print "Closest Frame:", frame, "  Timestamp:", time}
+    -H)#' ~/evidence/ssh_frames_epoch.txt
 
     #Output should be the closest frame to the intrusion event
 
