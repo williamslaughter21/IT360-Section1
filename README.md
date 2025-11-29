@@ -5,11 +5,11 @@ Functionality: This project aims to create a networking tool to solve a forensic
 # Code Quality
 SSH-Forensic Correlation Tool
 Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP capture.
-1) Extract accepted login timestamp from auth.log
+1) Extract accepted login timestamp from auth.log(input command after the letter)
 
     -A) grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
 
-2) Convert timestamp → epoch for correlation
+2) Convert timestamp → epoch for correlation(input command after the letter)
 
     -A) TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
     -B) YEAR=$(date +%Y)  # Assumes event happened this year
@@ -17,7 +17,7 @@ Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP
 
     -D) echo "Converted to epoch: $EPOCH"
 
-3) Compare against packet timestamps extracted earlier using tshark
+3) Compare against packet timestamps extracted earlier using tshark(input command after the letter)
 
     -A) awk -v e=$EPOCH '
     -B) BEGIN {min=1e12; frame=0; time=0} 
