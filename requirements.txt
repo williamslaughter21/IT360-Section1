@@ -1,6 +1,6 @@
 # List of Python packages or other dependencies 
 
-No external Python packages were used in this project. Our forensic tool was implemented using native Linux utilities and requires no additional pip-installable libraries.
+No external Python packages were used in this project. Our forensic tool was implemented using native Linux utilities and requires no additional pip-installable libraries. 
 
 # Tools/Package used(along with its purpose)
     1) tcpdump - Captured network packets during brute-force attack
