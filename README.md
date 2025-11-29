@@ -6,24 +6,24 @@ Functionality: This project aims to create a networking tool to solve a forensic
 SSH-Forensic Correlation Tool
 Purpose: To map a successful SSH login timestamp to the closest packet in a PCAP capture.
 1) Extract accepted login timestamp from auth.log
-grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
+  #grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
 
 2) Convert timestamp → epoch for correlation
-  TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
-  YEAR=$(date +%Y)  # Assumes event happened this year
-  EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
+  #TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
+  #YEAR=$(date +%Y)  # Assumes event happened this year
+  #EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
 
-  echo "Converted to epoch: $EPOCH"
+  #echo "Converted to epoch: $EPOCH"
 
 3) Compare against packet timestamps extracted earlier using tshark
-  awk -v e=$EPOCH '
-  BEGIN {min=1e12; frame=0; time=0} 
-  {
-    diff = ($2 > e) ? ($2 - e) : (e - $2)
-    if (diff < min) {min=diff; frame=$1; time=$2}
-  } 
-  END {print "Closest Frame:", frame, "  Timestamp:", time}
-  ' ~/evidence/ssh_frames_epoch.txt
+  #awk -v e=$EPOCH '
+  #BEGIN {min=1e12; frame=0; time=0} 
+  #{
+    #diff = ($2 > e) ? ($2 - e) : (e - $2)
+    #if (diff < min) {min=diff; frame=$1; time=$2}
+  #} 
+  #END {print "Closest Frame:", frame, "  Timestamp:", time}
+  #' ~/evidence/ssh_frames_epoch.txt
 
 #Output should be the closest frame to the intrusion event
 
