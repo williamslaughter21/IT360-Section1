@@ -1,26 +1,3 @@
 # SSH Timestamp to Packet Correlation Tool
-# Maps successful SSH login timestamp to PCAP frame number
 
-grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
-
-TIMESTR=$(awk '{print $1" "$2" "$3}' ~/evidence/accepted.txt)
-
-YEAR=$(date +%Y)
-
-EPOCH=$(date -d "$TIMESTR $YEAR" +%s)
-
-tshark -r ~/evidence/bruteforce_victim.pcap -T fields -e frame.number -e frame.time_epoch > ~/evidence/ssh_frames_epoch.txt
-
-awk -v e=$EPOCH '
-
-BEGIN {min=1e12; frame=0;} 
-
-{ diff = ($2 > e) ? ($2 - e) : (e - $2) }
-
-{ if (diff < min) {min=diff; frame=$1} }
-
-END {print "Closest Frame:", frame}
-
-' ~/evidence/ssh_frames_epoch.txt > ~/evidence/correlated_output.txt
-
-#Our official tool!
+editcap -r ~/evidence/bruteforce_victim.pcap ~/evidence/slice.pcap 330-436
