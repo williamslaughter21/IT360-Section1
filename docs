@@ -1,1 +1,6 @@
-# Screenshot of Wireshark "Success Packet"
+# Screenshots of Wireshark "Success Packet"
+![image](https://1drv.ms/i/c/c728c36a0f945d16/IQA65gl6a4CZTo9q00KcCJGjAbyRGWVBmG6lHvJH3CuFdVk?e=0tbyJt)
+
+![image](https://1drv.ms/i/c/c728c36a0f945d16/IQBKnHStvyC3T5dXm0pa_sS8AVZ0wSB64o4skwohWlLhKMI?e=wwqh4E)
+-  In Wireshark, with the filter tcp.port == 22 applied, we inspected frame No. 51 in the sliced file and confirmed that it sits inside the SSH key exchange / encrypted session that corresponds to the successful login. 
+
