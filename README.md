@@ -7,7 +7,7 @@ Functionality: This project aims to create a networking tool to solve a forensic
    
 2) Slice PCAP to relevant time window  
 
-3) Map timestamps → Wireshark frame number  
+3) Map timestamps to Wireshark frame number  
 
 4) Provide forensic evidence of SSH compromise
 
