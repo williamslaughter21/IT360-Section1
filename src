@@ -1,2 +1,4 @@
-#Main.py
-#Module.py
+# SSH Timestamp to Packet Correlation Tool
+# Stores the log-gathering step so our tool is reproducible
+
+  grep "Accepted password" /var/log/auth.log | tail -n 1 > ~/evidence/accepted.txt
